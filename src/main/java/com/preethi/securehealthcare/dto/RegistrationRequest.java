@@ -8,7 +8,7 @@ public class RegistrationRequest {
 
     private String password;
 
-    private String role;
+   
 
     public RegistrationRequest() {
     }
@@ -37,11 +37,8 @@ public class RegistrationRequest {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
+  
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+   
+    
 }

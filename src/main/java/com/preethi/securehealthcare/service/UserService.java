@@ -31,9 +31,7 @@ public class UserService {
 
         user.setPassword(hashedPassword);
 
-        user.setRole(
-                Role.valueOf(request.getRole().toUpperCase())
-        );
+       user.setRole(Role.PATIENT);
 
         return userRepository.save(user);
     }
