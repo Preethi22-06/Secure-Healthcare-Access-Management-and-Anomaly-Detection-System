@@ -34,5 +34,6 @@ public class UserService {
        user.setRole(Role.PATIENT);
 
         return userRepository.save(user);
+        
     }
 }
