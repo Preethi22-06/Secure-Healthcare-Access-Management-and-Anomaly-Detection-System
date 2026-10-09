@@ -48,6 +48,8 @@ public class User {
     public String getPassword() {
     return password;
 }
-  
+  public Role getRole() {
+    return role;
+}
     
 }
