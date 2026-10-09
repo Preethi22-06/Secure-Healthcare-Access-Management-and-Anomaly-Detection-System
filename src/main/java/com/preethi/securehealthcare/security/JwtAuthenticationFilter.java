@@ -8,6 +8,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.preethi.securehealthcare.entity.User;
+import com.preethi.securehealthcare.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,10 +19,14 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
+    public JwtAuthenticationFilter(
+        JwtService jwtService,
+        UserRepository userRepository) {
+    this.jwtService = jwtService;
+    this.userRepository = userRepository;
+}
 
     @Override
     protected void doFilterInternal(
@@ -38,19 +45,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authorizationHeader.substring(7);
 
             try {
-                String email =
-                        jwtService.extractEmail(token);
+                
+String email = jwtService.extractEmail(token);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                email,
-                                null,
-                                List.of()
-                        );
+User user = userRepository.findByEmail(email)
+        .orElseThrow(() ->
+                new RuntimeException("User not found"));
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
+UsernamePasswordAuthenticationToken authentication =
+        new UsernamePasswordAuthenticationToken(
+                email,
+                null,
+                List.of(
+                        new SimpleGrantedAuthority(
+                                "ROLE_" + user.getRole().name()
+                        )
+                )
+        );
+
+SecurityContextHolder
+        .getContext()
+        .setAuthentication(authentication);
+
 
             } catch (Exception e) {
                 System.out.println("Invalid JWT token");

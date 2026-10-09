@@ -37,13 +37,18 @@ public class SecurityConfig {
                 )
             )
 
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/register",
-                    "/api/auth/login"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
+           
+.authorizeHttpRequests(auth -> auth
+    .requestMatchers(
+        "/api/auth/register",
+        "/api/auth/login"
+    ).permitAll()
+    .requestMatchers("/api/patient/**").hasRole("PATIENT")
+    .requestMatchers("/api/doctor/**").hasRole("DOCTOR")
+    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+    .anyRequest().authenticated()
+)
+
 
             .addFilterBefore(
                 jwtAuthenticationFilter,
